@@ -24,11 +24,28 @@ android {
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    
+    signingConfigs {
+        release {
+            if (System.getenv()["CI"]) { // CI=true is exported by Nevercode
+                storeFile file(System.getenv()["NC_KEYSTORE_PATH"])
+                storePassword System.getenv()["NC_KEYSTORE_PASSWORD"]
+                keyAlias System.getenv()["NC_KEY_ALIAS"]
+                keyPassword System.getenv()["NC_KEY_PASSWORD"]
+            } else {
+                storeFile file("/path/to/local/myreleasekey.keystore")
+                storePassword "Parool123"
+                keyAlias "laura_alias"
+                keyPassword "Parool123"
+            }
+        }
+    }
 
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
         debug {
             testCoverageEnabled true
